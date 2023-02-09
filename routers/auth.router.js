@@ -1,9 +1,98 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
+const { StatusCodes } = require('http-status-codes');
+const logger = require('../middlewares/logger.middleware');
+const {
+  authenticate, login, logout, signup,
+} = require('../services/auth.service');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send('Hello world');
+/**
+ * GET /auth
+ * Request Login.
+ */
+router.get(
+  '/',
+  [
+    body('email').notEmpty().trim().isEmail(),
+    body('password').notEmpty().trim().isLength({ min: 8 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    logger.info({ request: req.body.email });
+    await login(req, res);
+  },
+);
+
+/**
+ * DELETE /auth
+ * Request to logout
+ */
+router.delete('/', authenticate, async (req, res) => {
+  await logout(req, res);
+});
+
+/**
+ * POST /auth/signup
+ * Request to register a new user with the given information.
+ */
+router.post(
+  '/signup',
+  [
+    body('email').notEmpty().trim().isEmail(),
+    body('password').notEmpty().trim().isLength({ min: 8 }),
+    body('displayName').notEmpty().isLength({ min: 4, max: 32 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    logger.info({
+      request: {
+        email: req.body.email,
+        displayName: req.body.displayName,
+      },
+    });
+    await signup(req, res);
+  },
+);
+
+/**
+ * TODO : Complete the implementations of recovery progresses
+ */
+
+/**
+ * GET /auth/recovery
+ * Request to get a private key to access the recovery progress.
+ */
+router.get('/recovery', (req, res) => {
+
+});
+
+/**
+ * PUT /auth/recovery
+ * Send the private key issued by a request
+ * and return 200 with a token if the key is valid
+ */
+router.put('/recovery', (req, res) => {
+
+});
+
+/**
+ * POST /auth/recovery
+ * Request to register a new password to an existant user account.
+ */
+router.post('/recovery', (req, res) => {
+
 });
 
 module.exports = router;

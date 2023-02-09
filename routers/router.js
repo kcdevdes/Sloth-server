@@ -1,7 +1,8 @@
 const express = require('express');
 
 /**
- * main router that holds every sub-routers connecting to each endpoints
+ * the main router that holds every sub-router
+ * connecting to each endpoint
  */
 const mainRouter = express.Router();
 
