@@ -1,10 +1,10 @@
 const express = require('express');
-const { body, validationResult } = require('express-validator');
-const { StatusCodes } = require('http-status-codes');
+const { body } = require('express-validator');
 const logger = require('../middlewares/logger.middleware');
 const {
   authenticate, login, logout, signup,
 } = require('../services/auth.service');
+const validate = require('../middlewares/validator.middleware');
 
 const router = express.Router();
 
@@ -17,14 +17,9 @@ router.get(
   [
     body('email').notEmpty().trim().isEmail(),
     body('password').notEmpty().trim().isLength({ min: 8 }),
+    validate,
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.sendStatus(StatusCodes.BAD_REQUEST);
-      return;
-    }
-
     logger.info({ request: req.body.email });
     await login(req, res);
   },
@@ -35,6 +30,7 @@ router.get(
  * Request to logout
  */
 router.delete('/', authenticate, async (req, res) => {
+  logger.info({ request: req.session.userId });
   await logout(req, res);
 });
 
@@ -47,14 +43,18 @@ router.post(
   [
     body('email').notEmpty().trim().isEmail(),
     body('password').notEmpty().trim().isLength({ min: 8 }),
-    body('displayName').notEmpty().isLength({ min: 4, max: 32 }),
+    body('displayName').notEmpty().isString().isLength({ min: 4, max: 32 }),
+    body('avatarUrl').notEmpty().isURL(),
+    validate,
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.sendStatus(StatusCodes.BAD_REQUEST);
-      return;
-    }
+    logger.info({
+      request: {
+        email: req.body.email,
+        displayName: req.body.displayName,
+        avatarUrl: req.body.avatarUrl,
+      },
+    });
 
     logger.info({
       request: {

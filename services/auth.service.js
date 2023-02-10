@@ -26,7 +26,7 @@ exports.login = async (req, res) => {
     }
 
     req.session.authenticated = true;
-    req.session.user = user.userid;
+    req.session.userId = user.userId;
 
     res.json({
       email: user.email,
@@ -69,14 +69,20 @@ exports.logout = async (req, res) => {
  * @param {*} res
  */
 exports.signup = async (req, res) => {
+  /**
+   * TODO: change `avatarUrl` into a default url.
+   */
   try {
-    const { email, password, displayName } = req.body;
+    const {
+      email, password, displayName, avatarUrl,
+    } = req.body;
     const newUser = new User({
       email,
       password,
       displayName,
       createdAt: Date.now(),
       userId: uuidv4(),
+      avatarUrl,
     });
 
     newUser.save((err, user) => {
@@ -88,6 +94,7 @@ exports.signup = async (req, res) => {
         email: user.email,
         displayName: user.displayName,
         userId: user.userId,
+        avatarUrl: user.avatarUrl,
       });
     });
   } catch (error) {
@@ -105,6 +112,7 @@ exports.signup = async (req, res) => {
  */
 exports.authenticate = (req, res, next) => {
   try {
+    // acceptable when `authenticated` is true and `userId` has a value
     if (!req.session.authenticated) {
       res.sendStatus(StatusCodes.UNAUTHORIZED);
       return;
