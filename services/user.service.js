@@ -8,29 +8,33 @@ const User = require('../models/user.model');
  * @returns
  */
 exports.getUserProfile = async (req, res) => {
-  const reqUserId = req.params.userId;
+  try {
+    const reqUserId = req.params.userId;
 
-  if (!reqUserId) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
+    if (!reqUserId) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    const user = await User.findOne({ userId: reqUserId });
+
+    if (!user) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    const payload = {
+      userId: user.userId,
+      displayName: user.displayName,
+      email: user.email,
+      createdAt: user.createdAt,
+      avatarUrl: user.avatarUrl,
+    };
+
+    res.json(payload);
+  } catch (error) {
+    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
   }
-
-  const user = await User.findOne({ userId: reqUserId });
-
-  if (!user) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-
-  const payload = {
-    userId: user.userId,
-    displayName: user.displayName,
-    email: user.email,
-    createdAt: user.createdAt,
-    avatarUrl: user.avatarUrl,
-  };
-
-  res.json(payload);
 };
 
 /**
@@ -41,40 +45,44 @@ exports.getUserProfile = async (req, res) => {
  * @returns
  */
 exports.updateUserProfile = async (req, res) => {
-  const reqUserId = req.params.userId;
-  // gets all fields that the user requests to update
-  const requestedKeys = Object.keys(req.body);
+  try {
+    const reqUserId = req.params.userId;
+    // gets all fields that the user requests to update
+    const requestedKeys = Object.keys(req.body);
 
-  if (!reqUserId || requestedKeys.length === 0) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-
-  if (reqUserId !== req.session.userId) {
-    res.sendStatus(StatusCodes.UNAUTHORIZED);
-    return;
-  }
-
-  const user = await User.findOne({ userId: reqUserId });
-
-  if (!user) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-
-  // updates each field
-  requestedKeys.forEach((key) => {
-    user[key] = req.body[key];
-  });
-
-  user.save((error) => {
-    if (error) {
-      res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+    if (!reqUserId || requestedKeys.length === 0) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
 
-    res.sendStatus(StatusCodes.OK);
-  });
+    if (reqUserId !== req.session.userId) {
+      res.sendStatus(StatusCodes.UNAUTHORIZED);
+      return;
+    }
+
+    const user = await User.findOne({ userId: reqUserId });
+
+    if (!user) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    // updates each field
+    requestedKeys.forEach((key) => {
+      user[key] = req.body[key];
+    });
+
+    user.save((error) => {
+      if (error) {
+        res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+        return;
+      }
+
+      res.sendStatus(StatusCodes.OK);
+    });
+  } catch (error) {
+    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
 };
 
 /**
@@ -86,38 +94,42 @@ exports.updateUserProfile = async (req, res) => {
  * @returns
  */
 exports.updateUserPassword = async (req, res) => {
-  const reqUserId = req.params.userId;
-  const { currentPassword, newPassword } = req.body;
+  try {
+    const reqUserId = req.params.userId;
+    const { currentPassword, newPassword } = req.body;
 
-  if (!reqUserId || !currentPassword || !newPassword) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-
-  if (reqUserId !== req.session.userId) {
-    res.sendStatus(StatusCodes.UNAUTHORIZED);
-    return;
-  }
-
-  const user = await User.findOne({ userId: reqUserId });
-  if (!user) {
-    res.sendStatus(StatusCodes.BAD_REQUEST);
-    return;
-  }
-
-  const isMatch = await user.comparePassword(currentPassword);
-  if (!isMatch) {
-    res.sendStatus(StatusCodes.UNAUTHORIZED);
-    return;
-  }
-
-  user.password = newPassword;
-  user.save((error) => {
-    if (error) {
-      res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+    if (!reqUserId || !currentPassword || !newPassword) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
       return;
     }
 
-    res.sendStatus(StatusCodes.ACCEPTED);
-  });
+    if (reqUserId !== req.session.userId) {
+      res.sendStatus(StatusCodes.UNAUTHORIZED);
+      return;
+    }
+
+    const user = await User.findOne({ userId: reqUserId });
+    if (!user) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      res.sendStatus(StatusCodes.UNAUTHORIZED);
+      return;
+    }
+
+    user.password = newPassword;
+    user.save((error) => {
+      if (error) {
+        res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+        return;
+      }
+
+      res.sendStatus(StatusCodes.ACCEPTED);
+    });
+  } catch (error) {
+    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
 };
