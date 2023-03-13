@@ -1,7 +1,9 @@
 const express = require('express');
 const { param, body } = require('express-validator');
 const { validate } = require('../models/user.model');
-const { uploadArticle, updateArticle, searchArticle } = require('../services/article.service');
+const {
+  uploadArticle, updateArticle, searchArticle, deleteArticle,
+} = require('../services/article.service');
 const { authenticate } = require('../services/auth.service');
 
 const router = express.Router();
@@ -40,6 +42,18 @@ router.put(
   authenticate,
   async (req, res) => {
     await updateArticle(req, res);
+  },
+);
+
+router.delete(
+  '/:articleId',
+  [
+    param('articleId').notEmpty().isUUID(),
+    validate,
+  ],
+  authenticate,
+  async (req, res) => {
+    await deleteArticle(req, res);
   },
 );
 

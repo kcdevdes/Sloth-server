@@ -86,3 +86,33 @@ exports.searchArticle = async (req, res) => {
     res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 };
+
+exports.deleteArticle = async (req, res) => {
+  try {
+    const { articleId } = req.params;
+    const { userId } = req.session;
+
+    const articleSearch = await Article.findOne({ articleId });
+    if (!articleSearch) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    if (userId !== articleSearch.userId) {
+      res.sendStatus(StatusCodes.UNAUTHORIZED);
+      return;
+    }
+
+    const result = await Article.deleteOne({ articleId });
+    if (!result) {
+      res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+      return;
+    }
+
+    res.sendStatus(StatusCodes.OK);
+    return;
+  } catch (error) {
+    logger.error({ error });
+    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+};
