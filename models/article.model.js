@@ -26,10 +26,7 @@ const articleSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  likes: {
-    type: Number,
-    required: true,
-  },
+  likes: [{ type: String }],
 });
 
 const Article = mongoose.model('Article', articleSchema);

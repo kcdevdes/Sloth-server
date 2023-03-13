@@ -12,7 +12,7 @@ exports.uploadArticle = async (req, res) => {
       content: req.body.content,
       createdAt: new Date(),
       modifiedAt: new Date(),
-      likes: 0,
+      likes: [],
     });
 
     newArticle.save((err, article) => {
