@@ -2,11 +2,15 @@ const express = require('express');
 const { param, body } = require('express-validator');
 const { validate } = require('../models/user.model');
 const {
-  uploadArticle, updateArticle, searchArticle, deleteArticle,
+  uploadArticle, updateArticle, searchArticle, deleteArticle, getMyArticles
 } = require('../services/article.service');
 const { authenticate } = require('../services/auth.service');
 
 const router = express.Router();
+
+router.get('/', authenticate, async (req, res) => {
+  await getMyArticles(req, res);
+});
 
 /**
  * GET /article/:articleId

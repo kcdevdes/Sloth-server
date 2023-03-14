@@ -33,6 +33,9 @@ exports.login = async (req, res) => {
       displayName: user.displayName,
       createdAt: user.createdAt,
       userId: user.userId,
+      avatarUrl: user.avatarUrl,
+      following: user.following,
+      followers: user.followers,
     });
   } catch (error) {
     logger.error(`${error}`);

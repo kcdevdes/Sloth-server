@@ -139,3 +139,25 @@ exports.deleteArticle = async (req, res) => {
     res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 };
+
+exports.getMyArticles = async (req, res) => {
+  try {
+    const { userId } = req.session;
+
+    const articles = await Article.find({ userId })
+      .sort({ createdAt: -1 })
+      .select('-_id -__v');
+
+    if (!articles) {
+      res.sendStatus(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    res.json({
+      articles,
+    });
+  } catch (error) {
+    logger.error({ error });
+    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+};
