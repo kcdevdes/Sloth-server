@@ -2,25 +2,31 @@ const express = require('express');
 const { param } = require('express-validator');
 const validate = require('../middlewares/validator.middleware');
 const { authenticate } = require('../services/auth.service');
-const { postNewLike } = require('../services/like.service');
+const { followUser, unfollowUser } = require('../services/follow.service');
 
 const router = express.Router();
 
-/**
- * POST /like/:articleId
- * Pushes the user's id into the `likes` array in MongoDB if it doesn't exist.
- * Otherwise, the user's id will be pulled from the array.
- * Authentication Required
- */
 router.post(
-  '/:articleId',
+  '/:userId',
   [
-    param('articleId').notEmpty().isUUID(),
+    param('userId').notEmpty().isUUID(),
     validate,
   ],
   authenticate,
   async (req, res) => {
-    await postNewLike(req, res);
+    await followUser(req, res);
+  },
+);
+
+router.delete(
+  '/:userId',
+  [
+    param('userId').notEmpty().isUUID(),
+    validate,
+  ],
+  authenticate,
+  async (req, res) => {
+    await unfollowUser(req, res);
   },
 );
 

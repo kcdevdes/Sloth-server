@@ -8,6 +8,10 @@ const { authenticate } = require('../services/auth.service');
 
 const router = express.Router();
 
+/**
+ * GET /article/:articleId
+ * Returns the article object of the given articleId
+ */
 router.get(
   '/:articleId',
   [
@@ -19,6 +23,12 @@ router.get(
   },
 );
 
+/**
+ * POST /article/
+ * Uploads a new article with the given values
+ * and returns the newly issued id of the article
+ * Authentication Required
+ */
 router.post(
   '/',
   [
@@ -32,6 +42,11 @@ router.post(
   },
 );
 
+/**
+ * PUT /article/:articleId
+ * Updates the article that has the articleId on the param
+ * Authentication Required
+ */
 router.put(
   '/:articleId',
   [
@@ -45,6 +60,11 @@ router.put(
   },
 );
 
+/**
+ * DELETE /article/:articleId
+ * Deletes the article that has the articleId on the param
+ * Authentication Required
+ */
 router.delete(
   '/:articleId',
   [

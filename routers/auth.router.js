@@ -44,7 +44,7 @@ router.post(
     body('email').notEmpty().trim().isEmail(),
     body('password').notEmpty().trim().isLength({ min: 8 }),
     body('displayName').notEmpty().isString().isLength({ min: 4, max: 32 }),
-    body('avatarUrl').notEmpty().isURL(),
+    body('avatarUrl').optional().isURL(),
     validate,
   ],
   async (req, res) => {

@@ -3,6 +3,11 @@ const { v4: uuidv4 } = require('uuid');
 const Article = require('../models/article.model');
 const logger = require('../middlewares/logger.middleware');
 
+/**
+ * Uploads a new aritlce with the given `req` value.
+ * @param {*} req
+ * @param {*} res
+ */
 exports.uploadArticle = async (req, res) => {
   try {
     const newArticle = new Article({
@@ -34,6 +39,12 @@ exports.uploadArticle = async (req, res) => {
   }
 };
 
+/**
+ * Updates any specific article.
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 exports.updateArticle = async (req, res) => {
   try {
     const articleSearch = await Article.findOneAndUpdate(
@@ -54,6 +65,12 @@ exports.updateArticle = async (req, res) => {
   }
 };
 
+/**
+ * Searchs for the article having the given articleId.
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 exports.searchArticle = async (req, res) => {
   try {
     const reqArticleId = req.params.articleId;
@@ -87,6 +104,12 @@ exports.searchArticle = async (req, res) => {
   }
 };
 
+/**
+ * Deletes the article having the given articleId.
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 exports.deleteArticle = async (req, res) => {
   try {
     const { articleId } = req.params;

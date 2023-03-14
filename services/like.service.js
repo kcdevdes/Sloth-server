@@ -2,6 +2,13 @@ const { StatusCodes } = require('http-status-codes');
 const Article = require('../models/article.model');
 const logger = require('../middlewares/logger.middleware');
 
+/**
+ * Checkes if the user's id does already exist in the `likes` array in MongoDB. If so,
+ * the id will be pushed into the array. Otherwise, it will be poped out from the array.
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 exports.postNewLike = async (req, res) => {
   try {
     const { articleId } = req.params;
@@ -21,7 +28,7 @@ exports.postNewLike = async (req, res) => {
 
     // if article contains the user id, it removes the id from the `likes` array
     if (articleSearch.likes.includes(userId)) {
-      articleSearch.update({ $pull: { likes: userId } }, (error, result) => {
+      articleSearch.updateOne({ $pull: { likes: userId } }, (error, result) => {
         if (error) {
           logger.error(error);
           res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
@@ -31,7 +38,7 @@ exports.postNewLike = async (req, res) => {
       });
       // otherwise, it pushes the user id into the `likes` array
     } else {
-      articleSearch.update({ $push: { likes: userId } }, (error, result) => {
+      articleSearch.updateOne({ $push: { likes: userId } }, (error, result) => {
         if (error) {
           logger.error(error);
           res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);

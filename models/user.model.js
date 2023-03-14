@@ -28,6 +28,8 @@ const userSchema = mongoose.Schema({
     type: String,
     required: false,
   },
+  following: [{ type: String }],
+  followers: [{ type: String }],
 });
 
 // hashes the password before saving the user to the database

@@ -83,11 +83,14 @@ exports.signup = async (req, res) => {
       createdAt: Date.now(),
       userId: uuidv4(),
       avatarUrl,
+      following: [],
+      followers: [],
     });
 
     newUser.save((err, user) => {
       if (err) {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
+        logger.error(`${err}`);
+        res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
         return;
       }
       res.json({
