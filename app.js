@@ -21,7 +21,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: 'mongodb://localhost:27017/sloth-mongo',
+    mongoUrl: `mongodb://${envConfig.MONGO_USERNAME}:${envConfig.MONGO_PASSWORD}@${envConfig.MONGO_URL}/${envConfig.MONGO_DB_NAME}`,
   }),
   cookie: { maxAge: (3.6e+6) * 1 }, // valid for an hour
 }));

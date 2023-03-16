@@ -9,3 +9,4 @@
 230209 | /auth - login, logout, signup 구현| User profile 관련 라우터 작업, Photo 업로드 방안 찾기 | `feature: add AuthRouter with a session login`
 230210 | /user - get profile, update profile, update password 완료 | Photo, Article 라우터 작업하기, README.md 업데이트 하기, Branch 분기하기 | `feature: add UserRouter`
 230313 | /article - get a specific article, upload a new article, and update any specific article 완료 | Likes Router 작업하기 | `feature: add article endpoints/ searching for article, uploading...`
+230316 | /feed, /like, /follow 작업완료, 베타버전 배포 시작 | 

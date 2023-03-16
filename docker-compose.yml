@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+#  mongo:
+#   restart: always
+#   container_name: mongo
+#   image: mongo
+#   volumes:
+#   - ./data:/data/db
+#   ports:
+#   - "27017:27017"
+#   networks:
+#     - app-network
+
+ sloth_node:
+  container_name: sloth_node
+  restart: always
+  build: .
+  ports:
+  - "3000:3000"
+#   links:
+#   - mongo
+#   depends_on:
+#   - mongo
+#   networks:
+#     - app-network 
+
+# networks:
+#   app-network:
+#     driver: bridge
