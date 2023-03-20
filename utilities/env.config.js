@@ -10,4 +10,5 @@ module.exports = {
   MONGO_USERNAME: process.env.MONGO_USERNAME,
   MONGO_PASSWORD: process.env.MONGO_PASSWORD,
   PRODUCTION_LEVEL: process.env.NODE_ENV,
+  PORT: process.env.PORT,
 };
